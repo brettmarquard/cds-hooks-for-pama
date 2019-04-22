@@ -1,63 +1,68 @@
+// Example for "no critera apply"
 {
-    "cards": [
-        {
-            "extension": {
-                "cdsSessionId": [
-                    {
-                        "system": "https://smart.example.com/cdsservice",
-                        "value": "12345",
-                        "assigner": {"display": "Acme Healthcare"}
-                    }
-                ],
-                "qcdsmConsulted": "https://acsearch.acr.org/docs/70910/Narrative/",
-                "aucNotApplicable": {
-                    "coding": [
-                        {
-                            "system": "https://acsearch.acr.org",
-                            "code": "1.0.0"
-                        }
-                    ],
-                    "text": "AUC 1.0.0 for diagnosis supplied not appropriate"
-                }
-            }
-        },
-        {
-            "summary": "Example Card",
-            "indicator": "info",
-            "detail": "This is an example card.",
-            "source": {
-                "label": "Static CDS Service Example",
-                "url": "https://example.com",
-                "icon": "https://example.com/img/icon-100px.png"
-            },
-            "extension": {
-                "aucApplied": [
-                    {
-                        "system": "https://acsearch.acr.or",
-                        "value": "70910548971"
-                     }
-                ],
-                "appropriatenessRatingscore": {
-                    "coding": [
-                        {
-                            "system": "http://fhir.org/guides/argonaut/appropriatenessRatingscore",
-                            "code": "May-Be-Appropriate"
-                        }
-                    ],
-                    "text": "May Be Appropriatee"
-                }
-            },         
-            "links": [
-                {
-                    "label": "ACR Guidelines to review",
-                    "url": "https://acsearch.acr.org/docs/70910/Narrative/",
-                    "type": "absolute"
-                }
-            ]
-        },
-        {
-            "summary": "Another card",
-            "indicator": "warning"
-        }
+  "extension": {
+    "http://fhir.org/guides/argonaut/pama-v1.0.0/context": [
+      {
+        "cdsSessionId": "urn:uuid:53fefa32-fcbb-4ff8-8a92-55ee120877b7",
+        "qcdsmConsulted": "http://example-cds-service.fhir.org/qualified-cds/provider",
+        "aucNotApplicableReason": "No criteria apply for a diagnosis of jaw pain",
+        "aucNotApplicable": [
+          {
+            "system": "https://acsearch.acr.org",
+            "code": "1.0.0"
+          }
+        ]
+      }
     ]
+  },
+  "cards": []
 }
+
+
+
+// Example where criteria do apply
+{
+  "cards": [
+    {
+      "summary": "Example Card",
+      "indicator": "info",
+      "detail": "This is an example card.",
+      "source": {
+        "label": "Static CDS Service Example",
+        "url": "https://example.com",
+        "icon": "https://example.com/img/icon-100px.png"
+      },
+      "extension": {
+        "http://fhir.org/guides/argonaut/pama-v1.0.0/score-detail": {
+          "aucApplied": [
+            {
+              "system": "https://acsearch.acr.or",
+              "value": "70910548971"
+            }
+          ],
+          "appropriatenessRatingscore": {
+            "coding": [
+              {
+                "system": "http://fhir.org/guides/argonaut/appropriatenessRatingscore",
+                "code": "May-Be-Appropriate"
+              }
+            ],
+            "text": "May Be Appropriatee"
+          }
+        }
+      },
+      "links": [
+        {
+          "label": "ACR Guidelines to review",
+          "url": "https://acsearch.acr.org/docs/70910/Narrative/",
+          "type": "absolute"
+        }
+      ]
+    },
+    {
+      "summary": "Another card",
+      "indicator": "warning"
+    }
+  ]
+}
+
