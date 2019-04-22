@@ -22,6 +22,14 @@
 
 // Example where criteria do apply
 {
+  "extension": {
+    "http://fhir.org/guides/argonaut/pama-v1.0.0/context": [
+      {
+        "cdsSessionId": "urn:uuid:53fefa32-fcbb-4ff8-8a92-55ee120877b7",
+        "qcdsmConsulted": "http://example-cds-service.fhir.org/qualified-cds/provider",
+      }
+    ]
+  },
   "cards": [
     {
       "summary": "Example Card",
