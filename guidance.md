@@ -33,8 +33,8 @@ Argonaut PAMA extensions at the top level of the response to communicate:
 Argonaut PAMA extensions within each **ServiceRequest** resource to communicate:
 
 | Field | Optionality | Type | Description |
-| ----- | -------- | ---- | ---- |
-| `pama-rating` | REQUIRED | *CodeableConcept* | 'Usually Appropriate'; 'May Be Appropriate'; 'Usually Not Appropriate'; 'Not Applicable'
+| --- | ---- |  ---- |  ---- | 
+| `pama-rating` | REQUIRED | *CodeableConcept* | 'Usually Appropriate'; 'May Be Appropriate'; 'Usually Not Appropriate'; 'Not Applicable' |
 | `pama-rating-qcdsm-consulted` | REQUIRED |  *uri* | canonical `url` representing the Qualified CDS Mechanism that was consulted. (Note: In future this may be a CMS assigned GCODE to identify service)correlation handle that can be used for audit logging |
 | `pama-rating-auc-applied` | REQUIRED |  *identifier* | identifier for the AUC applied
 | `pama-rating-consult-id` | REQUIRED | *uri* | correlation handle that can be used for audit logging
