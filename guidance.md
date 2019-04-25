@@ -33,7 +33,7 @@ Argonaut PAMA extensions at the top level of the response to communicate:
 Argonaut PAMA extensions within each **ServiceRequest** resource to communicate:
 
 | Field | Optionality | Type | Description |
-| --- | ---- |  ---- |  ---- | 
+| ------------------------------ | ---- |  ---- |  ---- | 
 | `pama-rating` | REQUIRED | *CodeableConcept* | 'Usually Appropriate'; 'May Be Appropriate'; 'Usually Not Appropriate'; 'Not Applicable' |
 | `pama-rating-auto-apply` | REQUIRED | *boolean* |  indicator to the requesting client to auto apply the score |
 
