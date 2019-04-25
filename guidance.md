@@ -28,17 +28,18 @@ Argonaut PAMA extensions at the top level of the response to communicate:
 
 | Field | Optionality | Type | Description |
 | --- | ---- |  ---- |  ---- | 
-| `cdsSessionId` | REQUIRED |  *identifier* | correlation handle that can be used for audit logging |
-| `qcdsmConsulted` | REQUIRED | *url* |  canonical `url` representing the Qualified CDS Mechanism that was consulted |
-| `aucNotApplicable` | REQUIRED | *CodeableConcept* |  list of identifiers conveying which AUCs were considered but deemed not to apply to this patient or scenario. For example, a qCDSM that implements the criteria from the American College of Radiology might return {"system": "https://acsearch.acr.org", "value": "1.0.0"} to indicate that these AUCs did not apply for the patient's diagnosis. |
+| `pama-rating-auto-apply` | REQUIRED | *boolean* |  indicator to the requesting client to auto apply the score |
 
-Argonaut PAMA extensions within each **card** to communicate:
+Argonaut PAMA extensions within each **ServiceRequest** resource to communicate:
 
 | Field | Optionality | Type | Description |
 | ----- | -------- | ---- | ---- |
-`aucApplied` | REQUIRED |  *identifier* | identifier for the AUC considered in this card
-`appropriatenessRatingscore` | REQUIRED | *CodeableConcept* | 'Usually Appropriate'; 'May Be Appropriate'; 'Usually Not Appropriate'; may include concept of 'No Score Available'?
-`description` | REQUIRED | *string* | Required if appropriatenessRatingscore = 'No Score Available'?) 
+| `pama-rating` | REQUIRED | *CodeableConcept* | 'Usually Appropriate'; 'May Be Appropriate'; 'Usually Not Appropriate'; 'Not Applicable'
+| `pama-rating-qcdsm-consulted` | REQUIRED |  *uri* | canonical `url` representing the Qualified CDS Mechanism that was consulted. (Note: In future this may be a CMS assigned GCODE to identify service)correlation handle that can be used for audit logging |
+| `pama-rating-auc-applied` | REQUIRED |  *identifier* | identifier for the AUC applied
+| `pama-rating-consult-id` | REQUIRED | *uri* | correlation handle that can be used for audit logging
+
+
 
 The CDS service response **MAY** provide:
 
@@ -113,6 +114,153 @@ Example request:
         }
     } Need to add Prefetch!
 
+### CDS Service Responses
+
+Example response when AUC "Not Applicable":
+
+   ```json
+{
+"cards": [
+{
+    "suggestions": [
+        {
+            "extension": {"http://fhir.org/argonaut/pama-rating-auto-apply": true},
+            "actions": [
+                {
+                    "type": "update",
+                    "resource": {
+                        "resourceType": "ServiceRequest",
+                        "id": "Example-MRI-Request",
+                        "extension": [
+                            {
+                                "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating",
+                                "valueCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://fhir.org/argonaut/CodeSystem/pama-rating",
+                                            "code": "not-applicable"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-qcdsm-consulted",
+                                "valueUri": "http://example-cds-service.fhir.org/qualified-cds/provider"
+                            },
+                            {
+                                "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-auc-applied",
+                                "valueUri": "https://acsearch.acr.org/70910548971"
+                            },
+                            {
+                                "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-consult-id",
+                                "valueUri": "urn:uuid:55f3b7fc-9955-420e-a460-ff284b2956e6"
+                            }
+                        ],
+                        "status": "draft",
+                        "intent": "plan",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "36801-9"
+                                }
+                            ],
+                            "text": "MRA Knee Vessels Right"
+                        },
+                        "subject": {"reference": "Patient/MRI-59879846"},
+                        "reasonCode": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/sid/icd-10",
+                                        "code": "S83.511",
+                                        "display": "Sprain of anterior cruciate ligament of right knee"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
+]
+}
+```
+
+Example response when criteria do apply:
+
+```json
+{
+"cards": [
+    {
+        "suggestions": [
+            {
+                "extension": {"http://fhir.org/argonaut/pama-rating-auto-apply": true},
+                "actions": [
+                    {
+                        "type": "update",
+                        "resource": {
+                            "resourceType": "ServiceRequest",
+                            "id": "Example-MRI-Request",
+                            "extension": [
+                                {
+                                    "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://fhir.org/argonaut/CodeSystem/pama-rating",
+                                                "code": "appropriate"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-qcdsm-consulted",
+                                    "valueUri": "http://example-cds-service.fhir.org/qualified-cds/provider"
+                                },
+                                {
+                                    "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-auc-applied",
+                                    "valueUri": "https://acsearch.acr.org/70910548971"
+                                },
+                                {
+                                    "url": "http://fhir.org/argonaut/StructureDefinition/pama-rating-consult-id",
+                                    "valueUri": "urn:uuid:55f3b7fc-9955-420e-a460-ff284b2956e6"
+                                }
+                            ],
+                            "status": "draft",
+                            "intent": "plan",
+                            "code": {
+                                "coding": [
+                                    {
+                                        "system": "http://loinc.org",
+                                        "code": "36801-9"
+                                    }
+                                ],
+                                "text": "MRA Knee Vessels Right"
+                            },
+                            "subject": {"reference": "Patient/MRI-59879846"},
+                            "reasonCode": [
+                                {
+                                    "coding": [
+                                        {
+                                            "system": "http://hl7.org/fhir/sid/icd-10",
+                                            "code": "S83.511",
+                                            "display": "Sprain of anterior cruciate ligament of right knee"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]
+}
+```
 
 
 ### Steps to add once Web Messaging spec is ready
